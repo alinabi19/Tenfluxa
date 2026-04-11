@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Tenfluxa.Infrastructure.Persistence;
+using Tenfluxa.Application.Interfaces;
+using Tenfluxa.Application.Services;
+using Tenfluxa.Infrastructure.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +11,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<TenfluxaDbContext>(options =>
-    options.UseNpgsql("Host=localhost;Port=5432;Database=tenfluxa_db;Username=postgres;Password=@ni$@59"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IJobRepository, JobRepository>();
+builder.Services.AddScoped<IJobService, JobService>();
 
 var app = builder.Build();
 
