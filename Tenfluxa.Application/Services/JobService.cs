@@ -9,8 +9,17 @@ public class JobService : IJobService
 {
     private static readonly List<Job> _jobs = new();
 
-    public Task<JobDto> CreateJobAsync(CreateJobRequest request, Guid tenantId)
+    public async Task<JobDto> CreateJobAsync(CreateJobRequest request, Guid tenantId)
     {
+        if (request == null)
+            throw new ArgumentNullException(nameof(request));
+
+        if (string.IsNullOrWhiteSpace(request.Title))
+            throw new ArgumentException("Title is required");
+
+        if (string.IsNullOrWhiteSpace(request.Description))
+            throw new ArgumentException("Description is required");
+
         var job = new Job
         {
             Id = Guid.NewGuid(),
@@ -21,30 +30,34 @@ public class JobService : IJobService
 
         _jobs.Add(job);
 
-        var result = MapToDto(job);
-
-        return Task.FromResult(result);
+        return MapToDto(job);
     }
 
-    public Task<IEnumerable<JobDto>> GetJobsAsync(Guid tenantId)
+    public async Task<List<JobDto>> GetJobsAsync(Guid tenantId)
     {
-        var jobs = _jobs
+        if (tenantId == Guid.Empty)
+            throw new ArgumentException("Invalid tenantId");
+
+        return _jobs
             .Where(j => j.TenantId == tenantId)
-            .Select(j => MapToDto(j));
-
-        return Task.FromResult(jobs);
+            .Select(MapToDto)
+            .ToList();
     }
 
-    public Task AssignWorkerAsync(Guid jobId, Guid workerId, Guid tenantId)
+    public async Task AssignWorkerAsync(Guid jobId, Guid workerId, Guid tenantId)
     {
+        if (jobId == Guid.Empty)
+            throw new ArgumentException("Invalid jobId");
+
+        if (workerId == Guid.Empty)
+            throw new ArgumentException("Invalid workerId");
+
         var job = _jobs.FirstOrDefault(j => j.Id == jobId && j.TenantId == tenantId);
 
         if (job == null)
             throw new Exception("Job not found");
 
         job.AssignWorker(workerId);
-
-        return Task.CompletedTask;
     }
 
     public Task MarkJobAsCompletedAsync(Guid jobId, Guid tenantId)

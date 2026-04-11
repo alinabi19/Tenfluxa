@@ -6,7 +6,7 @@ public interface IJobService
 {
     Task<JobDto> CreateJobAsync(CreateJobRequest request, Guid tenantId);
 
-    Task<IEnumerable<JobDto>> GetJobsAsync(Guid tenantId);
+    Task<List<JobDto>> GetJobsAsync(Guid tenantId);
 
     Task AssignWorkerAsync(Guid jobId, Guid workerId, Guid tenantId);
 
