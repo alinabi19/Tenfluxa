@@ -13,10 +13,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TenfluxaDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IJobRepository, JobRepository>();
+// Application
 builder.Services.AddScoped<IJobService, JobService>();
-builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
 builder.Services.AddScoped<IWorkerService, WorkerService>();
+
+// Infrastructure
+builder.Services.AddScoped<IJobRepository, JobRepository>();
+builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
 
 var app = builder.Build();
 
@@ -27,8 +30,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 
