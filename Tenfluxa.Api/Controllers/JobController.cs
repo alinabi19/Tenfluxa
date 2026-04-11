@@ -18,7 +18,7 @@ public class JobController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateJob([FromBody] CreateJobRequest request)
     {
-        var tenantId = Guid.NewGuid(); // temp (i'll improve later)
+        var tenantId = Guid.Parse("11111111-1111-1111-1111-111111111111");
 
         var result = await _jobService.CreateJobAsync(request, tenantId);
         return Ok(result);
