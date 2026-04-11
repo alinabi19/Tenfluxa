@@ -4,14 +4,14 @@ Multi-Tenant Event-Driven AI Service Operations Platform
 
 ---
 
-## 🚀 Overview
+## Overview
 
 Tenfluxa is a production-grade backend system designed using Clean Architecture principles.  
 It supports multi-tenant service operations with event-driven workflows and AI-based decision-making.
 
 ---
 
-## 🧱 Architecture
+## Architecture
 
 The project follows Clean Architecture:
 
@@ -22,7 +22,7 @@ The project follows Clean Architecture:
 
 ---
 
-## 🔑 Features (In Progress)
+## Features (In Progress)
 
 - Multi-Tenant System (Tenant-based isolation)
 - Job Management System
@@ -34,15 +34,15 @@ The project follows Clean Architecture:
 
 ---
 
-## 🧠 Current Progress
+## Current Progress
 
-- ✅ Clean Architecture setup
-- ✅ BaseEntity abstraction
-- ✅ Tenant entity (multi-tenancy foundation)
+- Clean Architecture setup
+- BaseEntity abstraction
+- Tenant entity (multi-tenancy foundation)
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - .NET 8 / ASP.NET Core Web API
 - Entity Framework Core + Dapper
@@ -53,6 +53,6 @@ The project follows Clean Architecture:
 
 ---
 
-## 📌 Goal
+## Goal
 
 To build a scalable, production-ready backend system that demonstrates real-world architecture and engineering practices.
