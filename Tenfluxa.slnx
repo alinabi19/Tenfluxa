@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Tenfluxa.Api/Tenfluxa.Api.csproj" />
+  <Project Path="Tenfluxa.Application/Tenfluxa.Application.csproj" />
+  <Project Path="Tenfluxa.Domain/Tenfluxa.Domain.csproj" />
+  <Project Path="Tenfluxa.Infrastructure/Tenfluxa.Infrastructure.csproj" />
+</Solution>
