@@ -11,5 +11,7 @@ public class Job : BaseEntity
 
     public Guid? AssignedWorkerId { get; set; }
 
+    public Worker? AssignedWorker { get; set; }
+
     public JobStatus Status { get; set; } = JobStatus.Pending;
 }
