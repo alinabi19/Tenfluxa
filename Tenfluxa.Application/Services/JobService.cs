@@ -1,18 +1,25 @@
 ﻿using Tenfluxa.Application.DTOs;
 using Tenfluxa.Application.Interfaces;
 using Tenfluxa.Domain.Entities;
-using Tenfluxa.Domain.Enums;
 
 namespace Tenfluxa.Application.Services;
 
 public class JobService : IJobService
 {
-    private static readonly List<Job> _jobs = new();
+    private readonly IJobRepository _jobRepository;
+
+    public JobService(IJobRepository jobRepository)
+    {
+        _jobRepository = jobRepository;
+    }
 
     public async Task<JobDto> CreateJobAsync(CreateJobRequest request, Guid tenantId)
     {
         if (request == null)
             throw new ArgumentNullException(nameof(request));
+
+        if (tenantId == Guid.Empty)
+            throw new ArgumentException("Invalid tenantId");
 
         if (string.IsNullOrWhiteSpace(request.Title))
             throw new ArgumentException("Title is required");
@@ -28,7 +35,8 @@ public class JobService : IJobService
             Description = request.Description
         };
 
-        _jobs.Add(job);
+        await _jobRepository.AddAsync(job);
+        await _jobRepository.SaveChangesAsync();
 
         return MapToDto(job);
     }
@@ -38,10 +46,9 @@ public class JobService : IJobService
         if (tenantId == Guid.Empty)
             throw new ArgumentException("Invalid tenantId");
 
-        return _jobs
-            .Where(j => j.TenantId == tenantId)
-            .Select(MapToDto)
-            .ToList();
+        var jobs = await _jobRepository.GetByTenantIdAsync(tenantId);
+
+        return jobs.Select(MapToDto).ToList();
     }
 
     public async Task AssignWorkerAsync(Guid jobId, Guid workerId, Guid tenantId)
@@ -52,24 +59,29 @@ public class JobService : IJobService
         if (workerId == Guid.Empty)
             throw new ArgumentException("Invalid workerId");
 
-        var job = _jobs.FirstOrDefault(j => j.Id == jobId && j.TenantId == tenantId);
+        var job = await _jobRepository.GetByIdAsync(jobId);
 
-        if (job == null)
+        if (job == null || job.TenantId != tenantId)
             throw new Exception("Job not found");
 
         job.AssignWorker(workerId);
+
+        await _jobRepository.SaveChangesAsync();
     }
 
-    public Task MarkJobAsCompletedAsync(Guid jobId, Guid tenantId)
+    public async Task MarkJobAsCompletedAsync(Guid jobId, Guid tenantId)
     {
-        var job = _jobs.FirstOrDefault(j => j.Id == jobId && j.TenantId == tenantId);
+        if (jobId == Guid.Empty)
+            throw new ArgumentException("Invalid jobId");
 
-        if (job == null)
+        var job = await _jobRepository.GetByIdAsync(jobId);
+
+        if (job == null || job.TenantId != tenantId)
             throw new Exception("Job not found");
 
         job.MarkAsCompleted();
 
-        return Task.CompletedTask;
+        await _jobRepository.SaveChangesAsync();
     }
 
     // ======================
