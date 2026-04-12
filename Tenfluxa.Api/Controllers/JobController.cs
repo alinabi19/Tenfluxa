@@ -2,8 +2,6 @@
 using Tenfluxa.Application.DTOs;
 using Tenfluxa.Application.Interfaces;
 
-namespace Tenfluxa.Api.Controllers;
-
 [ApiController]
 [Route("api/[controller]")]
 public class JobController : ControllerBase
@@ -16,32 +14,37 @@ public class JobController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateJob([FromBody] CreateJobRequest request)
+    public async Task<IActionResult> CreateJob(
+        [FromBody] CreateJobRequest request,
+        [FromQuery] Guid tenantId)
     {
-        var tenantId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-
         var result = await _jobService.CreateJobAsync(request, tenantId);
         return Ok(result);
     }
 
-    [HttpGet("{tenantId}")]
-    public async Task<IActionResult> GetJobs(Guid tenantId)
+    [HttpGet]
+    public async Task<IActionResult> GetJobs([FromQuery] Guid tenantId)
     {
         var jobs = await _jobService.GetJobsAsync(tenantId);
         return Ok(jobs);
     }
 
     [HttpPost("{jobId}/assign/{workerId}")]
-    public async Task<IActionResult> AssignWorker(Guid jobId, Guid workerId, Guid tenantId)
+    public async Task<IActionResult> AssignWorker(
+        Guid jobId,
+        Guid workerId,
+        [FromQuery] Guid tenantId)
     {
         await _jobService.AssignWorkerAsync(jobId, workerId, tenantId);
-        return Ok();
+        return Ok("Worker assigned successfully");
     }
 
     [HttpPost("{jobId}/complete")]
-    public async Task<IActionResult> CompleteJob(Guid jobId, Guid tenantId)
+    public async Task<IActionResult> CompleteJob(
+        Guid jobId,
+        [FromQuery] Guid tenantId)
     {
         await _jobService.MarkJobAsCompletedAsync(jobId, tenantId);
-        return Ok();
+        return Ok("Job completed successfully");
     }
 }

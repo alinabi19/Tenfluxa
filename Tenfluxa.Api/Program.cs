@@ -29,6 +29,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<Tenfluxa.Api.Middleware.ExceptionMiddleware>();
+
 app.UseHttpsRedirection();
 
 app.MapControllers();
