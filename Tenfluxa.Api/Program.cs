@@ -51,6 +51,9 @@ builder.Services.AddScoped<IWorkerService, WorkerService>();
 builder.Services.AddScoped<IJobRepository, JobRepository>();
 builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ITenantProvider, TenantProvider>();
+
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 
 builder.Services.AddSingleton(new JwtService(

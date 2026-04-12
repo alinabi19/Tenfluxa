@@ -8,14 +8,17 @@ namespace Tenfluxa.Application.Services;
 public class WorkerService : IWorkerService
 {
     private readonly IWorkerRepository _workerRepository;
-
-    public WorkerService(IWorkerRepository workerRepository)
+        private readonly ITenantProvider _tenantProvider;
+    public WorkerService(IWorkerRepository workerRepository, ITenantProvider tenantProvider)
     {
         _workerRepository = workerRepository;
+        _tenantProvider = tenantProvider;
     }
 
-    public async Task<Guid> CreateWorkerAsync(CreateWorkerRequest request, Guid tenantId)
+    public async Task<Guid> CreateWorkerAsync(CreateWorkerRequest request)
     {
+        var tenantId = _tenantProvider.GetTenantId();
+
         if (request == null)
             throw new ArgumentNullException(nameof(request));
 

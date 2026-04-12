@@ -18,9 +18,9 @@ public class WorkerController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateWorker(CreateWorkerRequest request, [FromQuery] Guid tenantId)
+    public async Task<IActionResult> CreateWorker(CreateWorkerRequest request)
     {
-        var workerId = await _workerService.CreateWorkerAsync(request, tenantId);
+        var workerId = await _workerService.CreateWorkerAsync(request);
 
         return Ok(workerId);
     }

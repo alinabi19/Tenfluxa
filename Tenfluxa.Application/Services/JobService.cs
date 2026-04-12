@@ -10,16 +10,22 @@ public class JobService : IJobService
     private readonly IJobRepository _jobRepository;
     private readonly IWorkerRepository _workerRepository;
 
+    private readonly ITenantProvider _tenantProvider;
+
     public JobService(
         IJobRepository jobRepository,
-        IWorkerRepository workerRepository)
+        IWorkerRepository workerRepository,
+        ITenantProvider tenantProvider)
     {
         _jobRepository = jobRepository;
         _workerRepository = workerRepository;
+        _tenantProvider = tenantProvider;
     }
 
-    public async Task<JobDto> CreateJobAsync(CreateJobRequest request, Guid tenantId)
+    public async Task<JobDto> CreateJobAsync(CreateJobRequest request)
     {
+        var tenantId = _tenantProvider.GetTenantId();
+
         if (request == null)
             throw new ArgumentNullException(nameof(request));
 
@@ -49,8 +55,10 @@ public class JobService : IJobService
         return MapToDto(job);
     }
 
-    public async Task<List<JobDto>> GetJobsAsync(Guid tenantId)
+    public async Task<List<JobDto>> GetJobsAsync()
     {
+        var tenantId = _tenantProvider.GetTenantId();
+
         if (tenantId == Guid.Empty)
             throw new ArgumentException("Invalid tenantId");
 
@@ -59,8 +67,10 @@ public class JobService : IJobService
         return jobs.Select(MapToDto).ToList();
     }
 
-    public async Task AssignWorkerAsync(Guid jobId, Guid workerId, Guid tenantId)
+    public async Task AssignWorkerAsync(Guid jobId, Guid workerId)
     {
+        var tenantId = _tenantProvider.GetTenantId();
+
         if (tenantId == Guid.Empty)
             throw new ArgumentException("Invalid tenantId");
 
@@ -101,8 +111,10 @@ public class JobService : IJobService
         await _jobRepository.SaveChangesAsync();
     }
 
-    public async Task MarkJobAsCompletedAsync(Guid jobId, Guid tenantId)
+    public async Task MarkJobAsCompletedAsync(Guid jobId)
     {
+        var tenantId = _tenantProvider.GetTenantId();
+
         if (tenantId == Guid.Empty)
             throw new ArgumentException("Invalid tenantId");
 

@@ -17,36 +17,33 @@ public class JobController : ControllerBase
 
     [HttpPost]
     public async Task<IActionResult> CreateJob(
-        [FromBody] CreateJobRequest request,
-        [FromQuery] Guid tenantId)
+        [FromBody] CreateJobRequest request)
     {
-        var result = await _jobService.CreateJobAsync(request, tenantId);
+        var result = await _jobService.CreateJobAsync(request);
         return Ok(result);
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetJobs([FromQuery] Guid tenantId)
+    public async Task<IActionResult> GetJobs()
     {
-        var jobs = await _jobService.GetJobsAsync(tenantId);
+        var jobs = await _jobService.GetJobsAsync();
         return Ok(jobs);
     }
 
     [HttpPost("{jobId}/assign/{workerId}")]
     public async Task<IActionResult> AssignWorker(
         Guid jobId,
-        Guid workerId,
-        [FromQuery] Guid tenantId)
+        Guid workerId)
     {
-        await _jobService.AssignWorkerAsync(jobId, workerId, tenantId);
+        await _jobService.AssignWorkerAsync(jobId, workerId);
         return Ok("Worker assigned successfully");
     }
 
     [HttpPost("{jobId}/complete")]
     public async Task<IActionResult> CompleteJob(
-        Guid jobId,
-        [FromQuery] Guid tenantId)
+        Guid jobId)
     {
-        await _jobService.MarkJobAsCompletedAsync(jobId, tenantId);
+        await _jobService.MarkJobAsCompletedAsync(jobId);
         return Ok("Job completed successfully");
     }
 }

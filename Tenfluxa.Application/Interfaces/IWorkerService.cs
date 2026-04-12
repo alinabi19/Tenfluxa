@@ -4,5 +4,5 @@ namespace Tenfluxa.Application.Interfaces;
 
 public interface IWorkerService
 {
-    Task<Guid> CreateWorkerAsync(CreateWorkerRequest request, Guid tenantId);
+    Task<Guid> CreateWorkerAsync(CreateWorkerRequest request);
 }
