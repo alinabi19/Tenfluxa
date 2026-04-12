@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tenfluxa.Application.DTOs;
 using Tenfluxa.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class JobController : ControllerBase
