@@ -6,10 +6,12 @@ namespace Tenfluxa.Api.Middleware;
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionMiddleware> _logger;
 
-    public ExceptionMiddleware(RequestDelegate next)
+    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -20,32 +22,37 @@ public class ExceptionMiddleware
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Unhandled exception occurred");
+
             await HandleExceptionAsync(context, ex);
         }
     }
 
-    private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private static async Task HandleExceptionAsync(HttpContext context, Exception ex)
     {
-        var statusCode = exception switch
-        {
-            ArgumentNullException => HttpStatusCode.BadRequest,
-            ArgumentException => HttpStatusCode.BadRequest,
-            KeyNotFoundException => HttpStatusCode.NotFound,
-            InvalidOperationException => HttpStatusCode.Conflict,
-            _ => HttpStatusCode.InternalServerError
-        };
+        context.Response.ContentType = "application/json";
 
         var response = new
         {
-            message = exception.Message,
-            type = exception.GetType().Name
+            statusCode = GetStatusCode(ex),
+            message = ex.Message
         };
 
+        context.Response.StatusCode = response.statusCode;
+
         var json = JsonSerializer.Serialize(response);
+        await context.Response.WriteAsync(json);
+    }
 
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)statusCode;
-
-        return context.Response.WriteAsync(json);
+    private static int GetStatusCode(Exception ex)
+    {
+        return ex switch
+        {
+            ArgumentNullException => (int)HttpStatusCode.BadRequest,
+            ArgumentException => (int)HttpStatusCode.BadRequest,
+            InvalidOperationException => (int)HttpStatusCode.BadRequest,
+            KeyNotFoundException => (int)HttpStatusCode.NotFound,
+            _ => (int)HttpStatusCode.InternalServerError
+        };
     }
 }

@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Text;
+using Tenfluxa.Api.Middleware;
 using Tenfluxa.Application.Interfaces;
 using Tenfluxa.Application.Services;
 using Tenfluxa.Infrastructure.Persistence;
 using Tenfluxa.Infrastructure.Persistence.Repositories;
-using Serilog;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -101,7 +102,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<Tenfluxa.Api.Middleware.ExceptionMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
