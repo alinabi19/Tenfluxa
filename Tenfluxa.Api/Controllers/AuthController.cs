@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Tenfluxa.Application.Services;
 
 namespace Tenfluxa.Api.Controllers;
@@ -8,18 +9,22 @@ namespace Tenfluxa.Api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly JwtService _jwtService;
+    private readonly IConfiguration _configuration;
 
-    public AuthController(JwtService jwtService)
+    public AuthController(JwtService jwtService, IConfiguration configuration)
     {
         _jwtService = jwtService;
+        _configuration = configuration;
     }
 
+    [AllowAnonymous]
     [HttpPost("login")]
     public IActionResult Login()
     {
-        // Dummy login (for now)
         var userId = Guid.NewGuid();
-        var tenantId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+        var tenantId = Guid.Parse(
+            _configuration["AuthSettings:DefaultTenantId"]
+        );
 
         var token = _jwtService.GenerateToken(userId, tenantId);
 
