@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
 using Tenfluxa.Api.Middleware;
+using Tenfluxa.Application.Events.Handlers;
 using Tenfluxa.Application.Interfaces;
 using Tenfluxa.Application.Services;
 using Tenfluxa.Infrastructure.Events;
@@ -65,6 +66,9 @@ builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 
+builder.Services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
+
+builder.Services.AddScoped<WorkerAssignedEventHandler>();
 builder.Services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
