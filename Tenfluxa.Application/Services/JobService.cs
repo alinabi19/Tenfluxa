@@ -153,6 +153,9 @@ public class JobService : IJobService
         // Mark worker busy
         worker.IsAvailable = false;
 
+        worker.LastAssignedAt = DateTime.UtcNow;
+        worker.TotalJobsCompleted += 1;
+
         await _jobRepository.SaveChangesAsync();
 
 

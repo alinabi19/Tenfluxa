@@ -1,15 +1,23 @@
 ﻿using Tenfluxa.Application.Interfaces;
 using Tenfluxa.Domain.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace Tenfluxa.Application.Services;
 
 public class AssignmentEngine : IAssignmentEngine
 {
     private readonly IWorkerRepository _workerRepository;
+    private readonly IEnumerable<IWorkerScoringStrategy> _strategies;
+    private readonly ILogger<AssignmentEngine> _logger;
 
-    public AssignmentEngine(IWorkerRepository workerRepository)
+    public AssignmentEngine(
+        IWorkerRepository workerRepository,
+        IEnumerable<IWorkerScoringStrategy> strategies,
+        ILogger<AssignmentEngine> logger)
     {
         _workerRepository = workerRepository;
+        _strategies = strategies;
+        _logger = logger;
     }
 
     public async Task<Guid?> GetBestWorkerAsync(Guid jobId)
@@ -19,14 +27,17 @@ public class AssignmentEngine : IAssignmentEngine
         if (!workers.Any())
             return null;
 
-        // SIMPLE AI LOGIC (rule-based for now)
-        // Later replace with ML
+        var scored = workers.Select(w =>
+        {
+            var score = _strategies.Sum(s => s.CalculateScore(w));
 
-        var bestWorker = workers
-            .OrderByDescending(w => w.IsAvailable)
-            .ThenBy(w => w.CreatedAt)
-            .FirstOrDefault();
+            _logger.LogInformation("Worker {Id} Score {Score}", w.Id, score);
 
-        return bestWorker?.Id;
+            return new { Worker = w, Score = score };
+        })
+        .OrderByDescending(x => x.Score)
+        .ToList();
+
+        return scored.First().Worker.Id;
     }
 }

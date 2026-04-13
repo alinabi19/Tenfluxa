@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Tenfluxa.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using Tenfluxa.Infrastructure.Persistence;
 namespace Tenfluxa.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(TenfluxaDbContext))]
-    partial class TenfluxaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260413142756_AddWorkerMetrics")]
+    partial class AddWorkerMetrics
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

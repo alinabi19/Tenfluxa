@@ -11,6 +11,7 @@ using Tenfluxa.Api.Services;
 using Tenfluxa.Application.Events.Handlers;
 using Tenfluxa.Application.Interfaces;
 using Tenfluxa.Application.Services;
+using Tenfluxa.Application.Services.Scoring;
 using Tenfluxa.Domain.Events;
 using Tenfluxa.Infrastructure.Events;
 using Tenfluxa.Infrastructure.Persistence;
@@ -82,6 +83,10 @@ builder.Services.AddScoped<IDomainEventHandler<WorkerAssignedEvent>, WorkerAssig
 builder.Services.AddScoped<INotificationService, SignalRNotificationService>();
 
 builder.Services.AddScoped<IAssignmentEngine, AssignmentEngine>();
+
+builder.Services.AddScoped<IWorkerScoringStrategy, AvailabilityScoreStrategy>();
+builder.Services.AddScoped<IWorkerScoringStrategy, WorkloadScoreStrategy>();
+builder.Services.AddScoped<IWorkerScoringStrategy, RecencyScoreStrategy>();
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 

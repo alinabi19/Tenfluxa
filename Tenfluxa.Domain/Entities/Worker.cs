@@ -11,4 +11,8 @@ public class Worker : BaseEntity
     public bool IsAvailable { get; set; } = true;
 
     public ICollection<Job> Jobs { get; set; } = new List<Job>();
+
+    public int TotalJobsCompleted { get; set; }
+
+    public DateTime LastAssignedAt { get; set; }
 }
