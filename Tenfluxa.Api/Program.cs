@@ -6,6 +6,7 @@ using System.Text;
 using Tenfluxa.Api.Middleware;
 using Tenfluxa.Application.Interfaces;
 using Tenfluxa.Application.Services;
+using Tenfluxa.Infrastructure.Events;
 using Tenfluxa.Infrastructure.Persistence;
 using Tenfluxa.Infrastructure.Persistence.Repositories;
 
@@ -63,6 +64,8 @@ builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITenantProvider, TenantProvider>();
+
+builder.Services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 

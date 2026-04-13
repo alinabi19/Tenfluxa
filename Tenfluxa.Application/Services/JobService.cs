@@ -12,17 +12,20 @@ public class JobService : IJobService
     private readonly IWorkerRepository _workerRepository;
     private readonly ITenantProvider _tenantProvider;
     private readonly ILogger<JobService> _logger;
+    private readonly IDomainEventPublisher _eventPublisher;
 
     public JobService(
         IJobRepository jobRepository,
         IWorkerRepository workerRepository,
         ITenantProvider tenantProvider,
-        ILogger<JobService> logger)
+        ILogger<JobService> logger,
+        IDomainEventPublisher eventPublisher)
     {
         _jobRepository = jobRepository;
         _workerRepository = workerRepository;
         _tenantProvider = tenantProvider;
         _logger = logger;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<JobDto> CreateJobAsync(CreateJobRequest request)
@@ -149,6 +152,12 @@ public class JobService : IJobService
 
         await _jobRepository.SaveChangesAsync();
 
+
+        // Publish domain events
+        await _eventPublisher.PublishAsync(job.DomainEvents);
+        job.ClearDomainEvents();
+
+        // Log success AFTER everything
         _logger.LogInformation("Worker {WorkerId} assigned successfully to job {JobId}", workerId, jobId);
     }
 
