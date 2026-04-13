@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
+using Tenfluxa.Api.Hubs;
 using Tenfluxa.Api.Middleware;
+using Tenfluxa.Api.Services;
 using Tenfluxa.Application.Events.Handlers;
 using Tenfluxa.Application.Interfaces;
 using Tenfluxa.Application.Services;
@@ -73,11 +75,11 @@ builder.Services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
 
 builder.Services.AddScoped<WorkerAssignedEventHandler>();
 
-builder.Services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
-
 builder.Services.AddScoped<IDomainEventHandlerDispatcher, DomainEventHandlerDispatcher>();
 
 builder.Services.AddScoped<IDomainEventHandler<WorkerAssignedEvent>, WorkerAssignedEventHandler>();
+
+builder.Services.AddScoped<INotificationService, SignalRNotificationService>();
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 
@@ -117,6 +119,8 @@ builder.Services.AddHangfire(config =>
 
 builder.Services.AddHangfireServer();
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
@@ -137,5 +141,7 @@ app.UseAuthorization();
 app.UseSerilogRequestLogging();
 
 app.MapControllers();
+
+app.MapHub<JobHub>("/hubs/job");
 
 app.Run();
