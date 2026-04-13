@@ -8,4 +8,6 @@ public interface IWorkerRepository
     Task<Worker?> GetByEmailAsync(string email, Guid tenantId);
     Task AddAsync(Worker worker);
     Task SaveChangesAsync();
+
+    Task<List<Worker>> GetAvailableWorkersAsync();
 }

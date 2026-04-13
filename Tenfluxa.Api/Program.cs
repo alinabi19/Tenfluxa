@@ -81,6 +81,8 @@ builder.Services.AddScoped<IDomainEventHandler<WorkerAssignedEvent>, WorkerAssig
 
 builder.Services.AddScoped<INotificationService, SignalRNotificationService>();
 
+builder.Services.AddScoped<IAssignmentEngine, AssignmentEngine>();
+
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 
 builder.Services.AddSingleton(new JwtService(

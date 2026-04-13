@@ -46,4 +46,11 @@ public class JobController : ControllerBase
         await _jobService.MarkJobAsCompletedAsync(jobId);
         return Ok("Job completed successfully");
     }
+
+    [HttpPost("{jobId}/auto-assign")]
+    public async Task<IActionResult> AutoAssign(Guid jobId)
+    {
+        await _jobService.AssignBestWorkerAsync(jobId);
+        return Ok("Worker auto-assigned successfully");
+    }
 }

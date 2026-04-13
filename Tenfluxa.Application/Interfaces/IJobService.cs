@@ -11,4 +11,6 @@ public interface IJobService
     Task AssignWorkerAsync(Guid jobId, Guid workerId);
 
     Task MarkJobAsCompletedAsync(Guid jobId);
+
+    Task AssignBestWorkerAsync(Guid jobId);
 }

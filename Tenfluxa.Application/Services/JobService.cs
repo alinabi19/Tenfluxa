@@ -13,19 +13,22 @@ public class JobService : IJobService
     private readonly ITenantProvider _tenantProvider;
     private readonly ILogger<JobService> _logger;
     private readonly IDomainEventPublisher _eventPublisher;
+    private readonly IAssignmentEngine _assignmentEngine;
 
     public JobService(
         IJobRepository jobRepository,
         IWorkerRepository workerRepository,
         ITenantProvider tenantProvider,
         ILogger<JobService> logger,
-        IDomainEventPublisher eventPublisher)
+        IDomainEventPublisher eventPublisher,
+        IAssignmentEngine assignmentEngine)
     {
         _jobRepository = jobRepository;
         _workerRepository = workerRepository;
         _tenantProvider = tenantProvider;
         _logger = logger;
         _eventPublisher = eventPublisher;
+        _assignmentEngine = assignmentEngine;
     }
 
     public async Task<JobDto> CreateJobAsync(CreateJobRequest request)
@@ -206,6 +209,16 @@ public class JobService : IJobService
         await _jobRepository.SaveChangesAsync();
 
         _logger.LogInformation("Job {JobId} marked as completed successfully", jobId);
+    }
+
+    public async Task AssignBestWorkerAsync(Guid jobId)
+    {
+        var workerId = await _assignmentEngine.GetBestWorkerAsync(jobId);
+
+        if (workerId == null)
+            throw new Exception("No available workers");
+
+        await AssignWorkerAsync(jobId, workerId.Value);
     }
 
     // ======================

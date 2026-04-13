@@ -35,4 +35,11 @@ public class WorkerRepository : IWorkerRepository
     {
         await _context.SaveChangesAsync();
     }
+
+    public async Task<List<Worker>> GetAvailableWorkersAsync()
+    {
+        return await _context.Workers
+            .Where(w => w.IsAvailable)
+            .ToListAsync();
+    }
 }
