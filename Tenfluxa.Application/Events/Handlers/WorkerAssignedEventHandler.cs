@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
+using Tenfluxa.Application.Interfaces;
 using Tenfluxa.Domain.Events;
 
 namespace Tenfluxa.Application.Events.Handlers;
 
-public class WorkerAssignedEventHandler
+public class WorkerAssignedEventHandler : IDomainEventHandler<WorkerAssignedEvent>
 {
     private readonly ILogger<WorkerAssignedEventHandler> _logger;
 
@@ -17,8 +18,7 @@ public class WorkerAssignedEventHandler
         _logger.LogInformation(
             "Handling WorkerAssignedEvent → JobId: {JobId}, WorkerId: {WorkerId}",
             domainEvent.JobId,
-            domainEvent.WorkerId
-        );
+            domainEvent.WorkerId);
 
         // FUTURE:
         // send email

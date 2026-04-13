@@ -1,3 +1,5 @@
+using Hangfire;
+using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -7,6 +9,7 @@ using Tenfluxa.Api.Middleware;
 using Tenfluxa.Application.Events.Handlers;
 using Tenfluxa.Application.Interfaces;
 using Tenfluxa.Application.Services;
+using Tenfluxa.Domain.Events;
 using Tenfluxa.Infrastructure.Events;
 using Tenfluxa.Infrastructure.Persistence;
 using Tenfluxa.Infrastructure.Persistence.Repositories;
@@ -69,7 +72,12 @@ builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 builder.Services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
 
 builder.Services.AddScoped<WorkerAssignedEventHandler>();
+
 builder.Services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
+
+builder.Services.AddScoped<IDomainEventHandlerDispatcher, DomainEventHandlerDispatcher>();
+
+builder.Services.AddScoped<IDomainEventHandler<WorkerAssignedEvent>, WorkerAssignedEventHandler>();
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 
@@ -101,7 +109,17 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddHangfire(config =>
+    config.UsePostgreSqlStorage(options =>
+        options.UseNpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"))
+    )
+);
+
+builder.Services.AddHangfireServer();
+
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
@@ -109,7 +127,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<ExceptionMiddleware>();
+app.UseHangfireDashboard();
 
 app.UseHttpsRedirection();
 
