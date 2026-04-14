@@ -31,4 +31,4 @@ jobs:
         run: dotnet test --no-build --verbosity normal
 
       - name: Build Docker image
-        run: docker build -t tenfluxa-api .
+        run: docker build -t tenfluxa-api -f Tenfluxa.Api/Dockerfile Tenfluxa.Api
