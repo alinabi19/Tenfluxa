@@ -155,4 +155,34 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
+app.MapGet("/", () =>
+{
+    return Results.Ok(new
+    {
+        service = "Tenfluxa API",
+        status = "Running",
+        environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown",
+        version = typeof(Program).Assembly.GetName().Version?.ToString(),
+        machine = Environment.MachineName,
+        timestamp = DateTime.UtcNow,
+        endpoints = new
+        {
+            swagger = "/swagger",
+            jobs = "/api/job",
+            auth = "/api/auth"
+        }
+    });
+});
+
+app.MapGet("/health", () =>
+{
+    return Results.Ok(new
+    {
+        status = "Healthy",
+        uptime = TimeSpan.FromMilliseconds(Environment.TickCount64).ToString(),
+        time = DateTime.UtcNow
+    });
+});
+
+
 app.Run();
