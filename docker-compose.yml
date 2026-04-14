@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: tenfluxa-postgres
+    environment:
+      POSTGRES_DB: tenfluxa_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  api:
+    build:
+      context: .
+      dockerfile: Tenfluxa.Api/Dockerfile
+    container_name: tenfluxa-api
+    depends_on:
+      - postgres
+    ports:
+      - "5000:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=tenfluxa_db;Username=postgres;Password=postgres

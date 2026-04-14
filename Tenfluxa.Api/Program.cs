@@ -16,6 +16,7 @@ using Tenfluxa.Domain.Events;
 using Tenfluxa.Infrastructure.Events;
 using Tenfluxa.Infrastructure.Persistence;
 using Tenfluxa.Infrastructure.Persistence.Repositories;
+using Tenfluxa.Infrastructure.Persistence.Migrations;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -24,6 +25,11 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(8080);
+});
 
 builder.Host.UseSerilog();
 
@@ -150,5 +156,11 @@ app.UseSerilogRequestLogging();
 app.MapControllers();
 
 app.MapHub<JobHub>("/hubs/job");
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<TenfluxaDbContext>();
+    db.Database.Migrate();
+}
 
 app.Run();
