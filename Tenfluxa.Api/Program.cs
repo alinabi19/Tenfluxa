@@ -26,11 +26,6 @@ Log.Logger = new LoggerConfiguration()
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(8080);
-});
-
 builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
