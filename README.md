@@ -1,6 +1,6 @@
 # Tenfluxa
 
-> Multi-Tenant Event-Driven AI Service Operations Platform (Production-Ready Backend)
+> **Multi-Tenant Event-Driven AI Service Operations Platform (Production-Ready Backend)**
 
 🌐 Live API: https://tenfluxa-api.onrender.com  
 📄 Swagger: https://tenfluxa-api.onrender.com/swagger  
