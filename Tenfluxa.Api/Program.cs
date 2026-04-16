@@ -163,7 +163,6 @@ app.MapGet("/", () =>
         status = "Running",
         environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown",
         version = typeof(Program).Assembly.GetName().Version?.ToString(),
-        machine = Environment.MachineName,
         timestamp = DateTime.UtcNow,
         endpoints = new
         {
