@@ -56,7 +56,7 @@ GET /
 
 ---
 
-## 🧠 Architecture
+## Architecture
 
 ```
 Client
